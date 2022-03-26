@@ -7,6 +7,7 @@
 //
 
 public struct CartesianProduct<Collections: Collection> where Collections.Element: Collection {
+
     let collections: Collections
 
     fileprivate init(collections: Collections) {
@@ -21,76 +22,54 @@ extension Collection where Element: Collection {
     }
 }
 
-extension CartesianProduct: Sequence {
+extension CartesianProduct: Collection {
 
     public typealias Element = [Collections.Element.Element]
 
-    public struct Iterator: IteratorProtocol {
+    public struct Index: Comparable {
 
-        let collections: Collections
         var indices: [Collections.Element.Index]
-        var endIteration = false
 
-        fileprivate init(collections: Collections) {
-            self.collections = collections
-            self.indices = collections.map(\.startIndex)
+        fileprivate init(_ indices: [Collections.Element.Index]) {
+            self.indices = indices
         }
 
-        public mutating func next() -> Element? {
-            guard !endIteration else { return nil }
-            guard !indices.isEmpty else {
-                endIteration = true
-                return []
+        public static func < (lhs: Self, rhs: Self) -> Bool {
+            assert(lhs.indices.count == rhs.indices.count)
+            for (l, r) in zip(lhs.indices, rhs.indices) {
+                if l < r {
+                    return true
+                } else if r < l {
+                    return false
+                }
             }
-
-            let result = zip(collections, indices).map { $0[$1] }
-
-            for (i, c) in collections.enumerated() {
-                c.formIndex(after: &indices[i])
-                guard indices[i] == c.endIndex else { return result }
-                // Reset this index, and advance
-                indices[i] = c.startIndex
-            }
-
-            // Means we have advanced every index of the collection past the end
-            endIteration = true
-            return result
+            return false
         }
     }
 
-    public func makeIterator() -> Iterator {
-        Iterator(collections: collections)
-    }
-}
+    public var startIndex: Index { Index(collections.map(\.startIndex)) }
+    public var endIndex: Index { Index(collections.map(\.endIndex)) }
+    public var count: Int { isEmpty ? 0 : collections.reduce(1) { $0 * $1.count } }
+    public var isEmpty: Bool { collections.isEmpty || collections.contains(where: \.isEmpty) }
 
-extension CartesianProduct {
-
-    public var count: Int { collections.reduce(1) { $0 * $1.count } }
-}
-
-private func cartesianProduct<Element>(arrays: [[Element]]) -> [[Element]] {
-    guard 1 < arrays.count else { return arrays }
-
-    var result: [[Element]] = []
-    var indices = Array<Int>(repeating: 0, count: arrays.count)
-
-    whileLoop: while true {
-        result.append(zip(arrays, indices).map { array, index in array[index] })
-
-        forLoop: for index in (0 ..< arrays.count).reversed() {
-            indices[index] += 1
-            guard indices[index] == arrays[index].count else { break forLoop }
-            guard 0 != index else { break whileLoop }
-            indices[index] = 0
+    public func formIndex(after i: inout Index) {
+        for (ci, c) in collections.enumerated() {
+            c.formIndex(after: &i.indices[ci])
+            guard i.indices[ci] == c.endIndex else { return }
+            // Reset this index, and advance
+            i.indices[ci] = c.startIndex
         }
+
+        i = endIndex
     }
 
-    return result
-}
+    public func index(after i: Index) -> Index {
+        var index = i
+        formIndex(after: &index)
+        return index
+    }
 
-//extension Sequence where Iterator.Element: Sequence {
-//
-//    public func cartesianProduct() -> [[Iterator.Element.Iterator.Element]] {
-//        return CartesianProduct.cartesianProduct(arrays: self.map { Array($0) })
-//    }
-//}
+    public subscript(position: Index) -> [Collections.Element.Element] {
+        zip(collections, position.indices).map { $0[$1] }
+    }
+}
