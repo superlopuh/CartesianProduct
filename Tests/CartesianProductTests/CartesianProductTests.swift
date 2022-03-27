@@ -20,15 +20,7 @@ class CartesianProductTests: XCTestCase {
         ]
 
         for (sequence, expected) in testCases {
-            let product = sequence.cartesianProduct()
-            XCTAssertEqual(product.count, expected.count)
-            XCTAssertEqual(product.isEmpty, expected.isEmpty)
-            XCTAssertEqual(Array(product), expected)
-            if product.isEmpty {
-                XCTAssertEqual(product.startIndex, product.endIndex)
-            } else {
-                XCTAssertLessThan(product.startIndex, product.endIndex)
-            }
+            verifyTestCase(sequence, expected)
         }
     }
 
@@ -40,15 +32,22 @@ class CartesianProductTests: XCTestCase {
         ]
 
         for (sequence, expected) in testCases {
-            let product = sequence.cartesianProduct()
-            XCTAssertEqual(product.count, expected.count)
-            XCTAssertEqual(product.isEmpty, expected.isEmpty)
-            XCTAssertEqual(Array(product), expected)
-            if product.isEmpty {
-                XCTAssertEqual(product.startIndex, product.endIndex)
-            } else {
-                XCTAssertLessThan(product.startIndex, product.endIndex)
-            }
+            verifyTestCase(sequence, expected)
+        }
+    }
+
+    func verifyTestCase<Collections: Collection>(
+        _ sequence: Collections,
+        _ expected: [[Collections.Element.Element]]
+    ) where Collections.Element: Collection, Collections.Element.Element: Equatable {
+        let product = sequence.cartesianProduct()
+        XCTAssertEqual(product.count, expected.count)
+        XCTAssertEqual(product.isEmpty, expected.isEmpty)
+        XCTAssertEqual(Array(product), expected)
+        if product.isEmpty {
+            XCTAssertEqual(product.startIndex, product.endIndex)
+        } else {
+            XCTAssertLessThan(product.startIndex, product.endIndex)
         }
     }
 }
