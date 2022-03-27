@@ -3,7 +3,6 @@
 //  CartesianProduct
 //
 //  Created by Sasha Lopoukhine on 08/05/2017.
-//  Copyright © 2017 CartesianProduct. All rights reserved.
 //
 
 public struct CartesianProduct<Collections: Collection> where Collections.Element: Collection {

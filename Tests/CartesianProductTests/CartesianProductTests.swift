@@ -1,14 +1,5 @@
-//
-//  CartesianProductTests.swift
-//  CartesianProduct
-//
-//  Created by Sasha Lopoukhine on 08/05/2017.
-//  Copyright © 2017 CartesianProduct. All rights reserved.
-//
-
-import Foundation
 import XCTest
-import CartesianProduct
+@testable import CartesianProduct
 
 class CartesianProductTests: XCTestCase {
 
@@ -62,11 +53,4 @@ class CartesianProductTests: XCTestCase {
             XCTAssertEqual(Array(product), expected)
         }
     }
-
-    static var allTests = [
-        ("testEmpty", testEmpty),
-        ("testOne", testOne),
-        ("testTwo", testTwo),
-        ("testThree", testThree),
-    ]
 }
