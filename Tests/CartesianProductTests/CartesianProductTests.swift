@@ -22,7 +22,7 @@ class CartesianProductTests: XCTestCase {
         for (sequence, expected) in testCases {
             let product = sequence.cartesianProduct()
             XCTAssertEqual(product.count, expected.count)
-            XCTAssertEqual(product.isEmpty, product.isEmpty)
+            XCTAssertEqual(product.isEmpty, expected.isEmpty)
             XCTAssertEqual(Array(product), expected)
             if product.isEmpty {
                 XCTAssertEqual(product.startIndex, product.endIndex)
@@ -42,7 +42,7 @@ class CartesianProductTests: XCTestCase {
         for (sequence, expected) in testCases {
             let product = sequence.cartesianProduct()
             XCTAssertEqual(product.count, expected.count)
-            XCTAssertEqual(product.isEmpty, product.isEmpty)
+            XCTAssertEqual(product.isEmpty, expected.isEmpty)
             XCTAssertEqual(Array(product), expected)
             if product.isEmpty {
                 XCTAssertEqual(product.startIndex, product.endIndex)
