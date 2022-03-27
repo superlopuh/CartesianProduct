@@ -47,7 +47,7 @@ extension CartesianProduct: Collection {
     }
 
     public var startIndex: Index { Index(collections.map(\.startIndex)) }
-    public var endIndex: Index { Index(collections.map(\.endIndex)) }
+    public var endIndex: Index { isEmpty ? startIndex : Index(collections.map(\.endIndex)) }
     public var count: Int { isEmpty ? 0 : collections.reduce(1) { $0 * $1.count } }
     public var isEmpty: Bool { collections.isEmpty || collections.contains(where: \.isEmpty) }
 
