@@ -49,5 +49,9 @@ class CartesianProductTests: XCTestCase {
         } else {
             XCTAssertLessThan(product.startIndex, product.endIndex)
         }
+        let reverseProduct = sequence.cartesianProduct().reversed()
+        XCTAssertEqual(reverseProduct.count, expected.count)
+        XCTAssertEqual(reverseProduct.isEmpty, expected.isEmpty)
+        XCTAssertEqual(Array(reverseProduct), Array(expected.reversed()))
     }
 }

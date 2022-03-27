@@ -72,3 +72,35 @@ extension CartesianProduct: Collection {
         zip(collections, position.indices).map { $0[$1] }
     }
 }
+
+extension CartesianProduct: BidirectionalCollection where Collections.Element: BidirectionalCollection {
+
+    public func formIndex(before i: inout Index) {
+        guard i != endIndex else {
+            // If end index, then decrement all indices.
+            // This function can only be called if the collection is not empty, meaning that none of
+            // the collections are empty, so this is safe.
+            for (ci, c) in collections.enumerated() {
+                c.formIndex(before: &i.indices[ci])
+            }
+            return
+        }
+
+        for (ci, c) in collections.enumerated() {
+            guard i.indices[ci] == c.startIndex else {
+                c.formIndex(before: &i.indices[ci])
+                return
+            }
+            // Start of this collection, reset to last element and decrement next index.
+            i.indices[ci] = c.index(before: c.endIndex)
+        }
+
+        fatalError("Attempting to decrement startIndex")
+    }
+
+    public func index(before i: Index) -> Index {
+        var index = i
+        formIndex(before: &index)
+        return index
+    }
+}
